@@ -98,7 +98,8 @@ Apache License
 
 
 ###############################################################################
-源码编译安装
+
+## 源码编译安装
 
 git clone https://ghproxy.com/git@github.com:BrentHuang/shadowsocks.git
 
@@ -112,7 +113,7 @@ client配置：{ 省略 }
 
 启动client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
 
-安装privoxy
+## 安装privoxy
 
 sudo apt-get install -y privoxy
 
@@ -123,27 +124,36 @@ sudo vim /etc/privoxy/config
 
 找到listen-address 127.0.0.1:8118行并取消注释
 
-配置环境变量使终端也能通过proxy访问
+## 配置环境变量使终端也能通过proxy访问
+
 /etc/profile, ~/.bashrc, ~/.bash_profile, 在任意一个文件末尾添加下面行：
 
+```
 proxy="http://127.0.0.1:8118"
 export https_proxy=$proxy
 export http_proxy=$proxy
 export ftp_proxy=$proxy
+```
 
-GFWList2Privoxy安装配置
+## GFWList2Privoxy安装配置
 
 sudo pip3 install gfwlist2privoxy
 
 获取在线gfwlist文件, 并生成actionfile文件
 
+```
 cd /tmp
 wget https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
+```
 
 在生成的gfwlist.action文件中添加需要通过proxy访问的域名（常用到已经在里面了，不需要改）, 同时在/etc/privoxy/config文件中加上actionsfile gfwlist.action即可使终端也通过pac访问。
 
-重启：sudo service privoxy restart
+## 重启
+
+sudo service privoxy restart
+
+## 浏览器代理
 
 在浏览器代理中配置http和https代理ip：127.0.0.1，端口：8118
