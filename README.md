@@ -7,6 +7,7 @@ shadowsocks
 A fast tunnel proxy that helps you bypass firewalls.
 
 Features:
+
 - TCP & UDP support
 - User management API
 - TCP Fast Open
@@ -29,10 +30,12 @@ CentOS:
     pip install git+https://github.com/shadowsocks/shadowsocks.git@master
 
 For CentOS 7, if you need AEAD ciphers, you need install libsodium
+
 ```
 dnf install libsodium python34-pip
 pip3 install  git+https://github.com/shadowsocks/shadowsocks.git@master
 ```
+
 Linux distributions with [snap](http://snapcraft.io/):
 
     snap install shadowsocks
@@ -64,7 +67,7 @@ If you installed the [snap](http://snapcraft.io/) package, you have to prefix th
 like this:
 
     shadowsocks.ssserver -p 443 -k password -m aes-256-cfb
-    
+
 ### Usage with Config File
 
 [Create configuration file and run](https://github.com/shadowsocks/shadowsocks/wiki/Configuration-via-Config-File)
@@ -72,7 +75,6 @@ like this:
 To start:
 
     ssserver -c /etc/shadowsocks.json
-
 
 Documentation
 -------------
@@ -84,36 +86,30 @@ License
 
 Apache License
 
-
-
-
-
-
-
 [Build Status]:      https://img.shields.io/travis/shadowsocks/shadowsocks/master.svg?style=flat
 [PyPI]:              https://pypi.python.org/pypi/shadowsocks
 [PyPI version]:      https://img.shields.io/pypi/v/shadowsocks.svg?style=flat
 [Travis CI]:         https://travis-ci.org/shadowsocks/shadowsocks
 
-
-
 ###############################################################################
 
 ## 源码编译安装
 
-git clone https://ghproxy.com/git@github.com:BrentHuang/shadowsocks.git
+`git clone https://ghproxy.com/git@github.com:BrentHuang/shadowsocks.git`
 
-注意：在python高版本上有报错，需要改源码。
+注意：在 python 高版本上有报错，需要改源码，我已改好。
 
+```bash
 python3 setup.py build
 
 sudo python3 setup.py install
+```
 
-client配置：{ 省略 }
+client 配置文件：/etc/shadowsocks/shadowsocks.json
 
-启动client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
+启动 client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
 
-## 安装privoxy
+## 安装 privoxy
 
 sudo apt-get install -y privoxy
 
@@ -122,24 +118,13 @@ sudo apt-get install -y privoxy
 sudo cp /etc/privoxy/config /etc/privoxy/config.bak
 sudo vim /etc/privoxy/config
 
-找到listen-address 127.0.0.1:8118行并取消注释
+找到 listen-address 127.0.0.1:8118 行并取消注释
 
-## 配置环境变量使终端也能通过proxy访问
-
-/etc/profile, ~/.bashrc, ~/.bash_profile, 在任意一个文件末尾添加下面行：
-
-```
-proxy="http://127.0.0.1:8118"
-export https_proxy=$proxy
-export http_proxy=$proxy
-export ftp_proxy=$proxy
-```
-
-## GFWList2Privoxy安装配置
+## GFWList2Privoxy 安装配置
 
 sudo pip3 install gfwlist2privoxy
 
-获取在线gfwlist文件, 并生成actionfile文件
+获取在线 gfwlist 文件，并生成 actionfile 文件
 
 ```
 cd /tmp
@@ -148,12 +133,16 @@ gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
 ```
 
-在生成的gfwlist.action文件中添加需要通过proxy访问的域名（常用到已经在里面了，不需要改）, 同时在/etc/privoxy/config文件中加上actionsfile gfwlist.action即可使终端也通过pac访问。
+在生成的 gfwlist.action 文件中添加需要通过 proxy 访问的域名（常用的已经在里面了，不需要改）,
 
-## 重启
+在 /etc/privoxy/config 文件中加上 actionsfile gfwlist.action。
+
+## 重启 privoxy
 
 sudo service privoxy restart
 
-## 浏览器代理
+## 设置系统代理
 
-在浏览器代理中配置http和https代理ip：127.0.0.1，端口：8118
+设置为“手动”，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
+
+浏览器代理设置为“使用系统代理”。
