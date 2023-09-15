@@ -109,6 +109,10 @@ client 配置文件：/etc/shadowsocks/shadowsocks.json
 
 启动 client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
 
+停止：sudo sslocal -d stop
+
+help 信息：sslocal -h
+
 ## 安装 privoxy
 
 sudo apt-get install -y privoxy
@@ -128,7 +132,7 @@ sudo pip3 install gfwlist2privoxy
 
 ```
 cd /tmp
-wget https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
+wget https://ghproxy.com/https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
 ```
@@ -141,8 +145,8 @@ sudo cp gfwlist.action /etc/privoxy/
 
 sudo service privoxy restart
 
-## 设置系统代理
+## 设置系统代理 Network Proxy
 
-设置为“手动”，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
+设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
 
-浏览器代理设置为“使用系统代理”。
+浏览器代理设置为：使用系统代理 Use system proxy settings。
