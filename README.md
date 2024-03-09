@@ -105,7 +105,17 @@ python3 setup.py build
 sudo python3 setup.py install
 ```
 
-client 配置文件：/etc/shadowsocks/shadowsocks.json
+client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
+
+{
+  "server": "127.0.0.1",  # 改为你的服务器地址
+  "server_port": 8388,    # 改为你的服务器端口
+  "local_address": "127.0.0.1",
+  "local_port": 1080,     # 本地端口，一般不用变
+  "password": "mypassword",  # 改为你的密码
+  "timeout": 600,
+  "method": "aes-256-cfb"  # 加密方式，一般不用变
+}
 
 启动 client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
 
@@ -122,7 +132,7 @@ sudo apt-get install -y privoxy
 sudo cp /etc/privoxy/config /etc/privoxy/config.bak
 sudo vim /etc/privoxy/config
 
-找到 listen-address 127.0.0.1:8118 行并取消注释
+找到 listen-address 127.0.0.1:8118 行，取消注释
 
 ## GFWList2Privoxy 安装配置
 
@@ -137,9 +147,9 @@ gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
 ```
 
-在生成的 gfwlist.action 文件中添加需要通过 proxy 访问的域名（常用的已经在里面了，不需要改）,
+在 /etc/privoxy/gfwlist.action 文件中添加需要通过 proxy 访问的域名（常用的已经在里面了，不需要改）,
 
-在 /etc/privoxy/config 文件中加上 actionsfile gfwlist.action。
+在 /etc/privoxy/config 文件中加上：actionsfile gfwlist.action。
 
 ## 重启 privoxy
 
@@ -147,6 +157,6 @@ sudo service privoxy restart
 
 ## 设置系统代理 Network Proxy
 
-设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
+将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
 
 浏览器代理设置为：使用系统代理 Use system proxy settings。
