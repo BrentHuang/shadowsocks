@@ -100,7 +100,7 @@ Apache License
 注意：在 python 高版本上有报错，需要改源码，我已改好。
 
 ```bash
-python3 setup.py build
+python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install setuptools
 
 sudo python3 setup.py install
 ```
@@ -123,7 +123,7 @@ client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.js
 
 help 信息：sslocal -h
 
-## 安装 privoxy
+## 安装 privoxy（<https://www.privoxy.org/>）
 
 sudo apt-get install -y privoxy
 
