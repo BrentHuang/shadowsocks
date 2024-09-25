@@ -102,19 +102,45 @@ Apache License
 ```bash
 python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install setuptools
 
-sudo python3 setup.py install
+sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安装到 /usr/local/bin 目录下
 ```
+
+追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中有 sslocal 和 ssserver 可执行程序，更新也比较活跃。
+
+### 服务器配置、启停
+
+购买一台海外服务器：<https://www.digitalocean.com/>，<https://www.vultr.com/>
+
+服务器配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
+
+{
+  "server": "0.0.0.0",  # 你的服务器地址，默认为 0.0.0.0
+  "server_port": 8388,  # 你的服务器端口，默认为 8338
+  "password": "mypassword",  # 改为你的密码
+  "timeout": 300,  # 超时，默认为 300 秒
+  "method": "aes-256-gcm"  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
+}
+
+启动服务器：sudo ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
+
+停止：sudo ssserver -d stop
+
+help 信息：ssserver -h
+
+服务端性能调优：<https://shadowsocks.org/doc/advanced.html>
+
+### Linux 客户端配置、启停
 
 client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
 
 {
   "server": "127.0.0.1",  # 改为你的服务器地址
   "server_port": 8388,    # 改为你的服务器端口
-  "local_address": "127.0.0.1",
-  "local_port": 1080,     # 本地端口，一般不用变
   "password": "mypassword",  # 改为你的密码
-  "timeout": 600,
-  "method": "aes-256-cfb"  # 加密方式，一般不用变
+  "timeout": 300,  # 超时，默认为 300 秒
+  "method": "aes-256-gcm"  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
+  "local_address": "127.0.0.1",  # 本地地址，一般不用变
+  "local_port": 1080,  # 本地端口，一般不用变
 }
 
 启动 client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
@@ -123,7 +149,7 @@ client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.js
 
 help 信息：sslocal -h
 
-## 安装 privoxy（<https://www.privoxy.org/>）
+#### 安装 privoxy（<https://www.privoxy.org/>）
 
 sudo apt-get install -y privoxy
 
@@ -134,7 +160,7 @@ sudo vim /etc/privoxy/config
 
 找到 listen-address 127.0.0.1:8118 行，取消注释
 
-## GFWList2Privoxy 安装配置
+#### GFWList2Privoxy 安装配置
 
 sudo pip3 install gfwlist2privoxy
 
@@ -151,11 +177,11 @@ sudo cp gfwlist.action /etc/privoxy/
 
 在 /etc/privoxy/config 文件中加上：actionsfile gfwlist.action。
 
-## 重启 privoxy
+#### 重启 privoxy
 
 sudo service privoxy restart
 
-## 设置系统代理 Network Proxy
+#### 设置系统代理 Network Proxy
 
 将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
 

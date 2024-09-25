@@ -167,7 +167,7 @@ class UDPRelay(object):
             else:
                 frag = common.ord(data[2])
                 if frag != 0:
-                    logging.warn('UDP drop a message since frag is not 0')
+                    logging.warning('UDP drop a message since frag is not 0')
                     return
                 else:
                     data = data[3:]
@@ -196,17 +196,17 @@ class UDPRelay(object):
             # spec https://shadowsocks.org/en/spec/one-time-auth.html
             self._ota_enable_session = addrtype & ADDRTYPE_AUTH
             if self._ota_enable and not self._ota_enable_session:
-                logging.warn('client one time auth is required')
+                logging.warning('client one time auth is required')
                 return
             if self._ota_enable_session:
                 if len(data) < header_length + ONETIMEAUTH_BYTES:
-                    logging.warn('UDP one time auth header is too short')
+                    logging.warning('UDP one time auth header is too short')
                     return
                 _hash = data[-ONETIMEAUTH_BYTES:]
-                data = data[: -ONETIMEAUTH_BYTES]
+                data = data[:-ONETIMEAUTH_BYTES]
                 _key = iv + key
                 if onetimeauth_verify(_hash, data, _key) is False:
-                    logging.warn('UDP one time auth fail')
+                    logging.warning('UDP one time auth fail')
                     return
         addrs = self._dns_cache.get(server_addr, None)
         if addrs is None:

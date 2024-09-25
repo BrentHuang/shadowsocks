@@ -179,7 +179,7 @@ def parse_header(data):
             dest_port = struct.unpack('>H', data[5:7])[0]
             header_length = 7
         else:
-            logging.warn('header is too short')
+            logging.warning('header is too short')
     elif addrtype & ADDRTYPE_MASK == ADDRTYPE_HOST:
         if len(data) > 2:
             addrlen = ord(data[1])
@@ -189,19 +189,19 @@ def parse_header(data):
                                                      addrlen])[0]
                 header_length = 4 + addrlen
             else:
-                logging.warn('header is too short')
+                logging.warning('header is too short')
         else:
-            logging.warn('header is too short')
+            logging.warning('header is too short')
     elif addrtype & ADDRTYPE_MASK == ADDRTYPE_IPV6:
         if len(data) >= 19:
             dest_addr = socket.inet_ntop(socket.AF_INET6, data[1:17])
             dest_port = struct.unpack('>H', data[17:19])[0]
             header_length = 19
         else:
-            logging.warn('header is too short')
+            logging.warning('header is too short')
     else:
-        logging.warn('unsupported addrtype %d, maybe wrong password or '
-                     'encryption method' % addrtype)
+        logging.warning('unsupported addrtype %d, maybe wrong password or '
+                        'encryption method' % addrtype)
     if dest_addr is None:
         return None
     return addrtype, to_bytes(dest_addr), dest_port, header_length
@@ -235,8 +235,8 @@ class IPNetwork(object):
             while (ip & 1) == 0 and ip is not 0:
                 ip >>= 1
                 prefix_size += 1
-            logging.warn("You did't specify CIDR routing prefix size for %s, "
-                         "implicit treated as %s/%d" % (addr, addr, addr_len))
+            logging.warning("You did't specify CIDR routing prefix size for %s, "
+                            "implicit treated as %s/%d" % (addr, addr, addr_len))
         elif block[1].isdigit() and int(block[1]) <= addr_len:
             prefix_size = addr_len - int(block[1])
             ip >>= prefix_size

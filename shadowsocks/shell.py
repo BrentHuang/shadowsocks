@@ -172,22 +172,20 @@ def check_config(config, is_local):
         config['tunnel_port'] = int(config['tunnel_port'])
 
     if config.get('local_address', '') in [b'0.0.0.0']:
-        logging.warn('warning: local set to listen on 0.0.0.0, it\'s not safe')
+        logging.warning('warning: local set to listen on 0.0.0.0, it\'s not safe')
     if config.get('server', '') in ['127.0.0.1', 'localhost']:
-        logging.warn('warning: server set to listen on %s:%s, are you sure?' %
-                     (to_str(config['server']), config['server_port']))
+        logging.warning('warning: server set to listen on %s:%s, are you sure?' %
+                        (to_str(config['server']), config['server_port']))
     if (config.get('method', '') or '').lower() == 'table':
-        logging.warn('warning: table is not safe; please use a safer cipher, '
-                     'like AES-256-CFB')
+        logging.warning('warning: table is not safe; please use a safer cipher, '
+                        'like AES-256-CFB')
     if (config.get('method', '') or '').lower() == 'rc4':
-        logging.warn('warning: RC4 is not safe; please use a safer cipher, '
-                     'like AES-256-CFB')
+        logging.warning('warning: RC4 is not safe; please use a safer cipher, '
+                        'like AES-256-CFB')
     if config.get('timeout', 300) < 100:
-        logging.warn('warning: your timeout %d seems too short' %
-                     int(config.get('timeout')))
+        logging.warning('warning: your timeout %d seems too short' % int(config.get('timeout')))
     if config.get('timeout', 300) > 600:
-        logging.warn('warning: your timeout %d seems too long' %
-                     int(config.get('timeout')))
+        logging.warning('warning: your timeout %d seems too long' % int(config.get('timeout')))
     if config.get('password') in [b'mypassword']:
         logging.error('DON\'T USE DEFAULT PASSWORD! Please change it in your '
                       'config.json!')

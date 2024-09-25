@@ -49,15 +49,13 @@ def load_library(path, search_symbol, library_name):
             logging.info('loading %s from %s', library_name, path)
             return lib
         else:
-            logging.warn('can\'t find symbol %s in %s', search_symbol,
-                         path)
+            logging.warning('can\'t find symbol %s in %s', search_symbol, path)
     except Exception:
         pass
     return None
 
 
-def find_library(possible_lib_names, search_symbol, library_name,
-                 custom_path=None):
+def find_library(possible_lib_names, search_symbol, library_name, custom_path=None):
     import ctypes.util
 
     if custom_path:
@@ -88,11 +86,7 @@ def find_library(possible_lib_names, search_symbol, library_name,
         import glob
 
         for name in lib_names:
-            patterns = [
-                '/usr/local/lib*/lib%s.*' % name,
-                '/usr/lib*/lib%s.*' % name,
-                'lib%s.*' % name,
-                '%s.dll' % name]
+            patterns = ['/usr/local/lib*/lib%s.*' % name, '/usr/lib*/lib%s.*' % name, 'lib%s.*' % name, '%s.dll' % name]
 
             for pat in patterns:
                 files = glob.glob(pat)
@@ -153,13 +147,11 @@ def run_cipher(cipher, decipher):
 def test_find_library():
     assert find_library('c', 'strcpy', 'libc') is not None
     assert find_library(['c'], 'strcpy', 'libc') is not None
-    assert find_library(('c',), 'strcpy', 'libc') is not None
-    assert find_library(('crypto', 'eay32'), 'EVP_CipherUpdate',
-                        'libcrypto') is not None
+    assert find_library(('c', ), 'strcpy', 'libc') is not None
+    assert find_library(('crypto', 'eay32'), 'EVP_CipherUpdate', 'libcrypto') is not None
     assert find_library('notexist', 'strcpy', 'libnotexist') is None
     assert find_library('c', 'symbol_not_exist', 'c') is None
-    assert find_library(('notexist', 'c', 'crypto', 'eay32'),
-                        'EVP_CipherUpdate', 'libc') is not None
+    assert find_library(('notexist', 'c', 'crypto', 'eay32'), 'EVP_CipherUpdate', 'libc') is not None
 
 
 if __name__ == '__main__':

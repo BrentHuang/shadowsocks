@@ -341,18 +341,18 @@ class TCPRelayHandler(object):
             # spec https://shadowsocks.org/en/spec/one-time-auth.html
             self._ota_enable_session = addrtype & ADDRTYPE_AUTH
             if self._ota_enable and not self._ota_enable_session:
-                logging.warn('client one time auth is required')
+                logging.warning('client one time auth is required')
                 return
             if self._ota_enable_session:
                 if len(data) < header_length + ONETIMEAUTH_BYTES:
-                    logging.warn('one time auth header is too short')
+                    logging.warning('one time auth header is too short')
                     return None
                 offset = header_length + ONETIMEAUTH_BYTES
-                _hash = data[header_length: offset]
+                _hash = data[header_length:offset]
                 _data = data[:header_length]
                 key = self._cryptor.decipher_iv + self._cryptor.key
                 if onetimeauth_verify(_hash, _data, key) is False:
-                    logging.warn('one time auth fail')
+                    logging.warning('one time auth fail')
                     self.destroy()
                     return
                 header_length += ONETIMEAUTH_BYTES
@@ -480,7 +480,7 @@ class TCPRelayHandler(object):
                 index = struct.pack('>I', self._ota_chunk_idx)
                 key = self._cryptor.decipher_iv + index
                 if onetimeauth_verify(_hash, _data, key) is False:
-                    logging.warn('one time auth fail, drop chunk !')
+                    logging.warning('one time auth fail, drop chunk !')
                 else:
                     unchunk_data += _data
                     self._ota_chunk_idx += 1
@@ -814,10 +814,9 @@ class TCPRelay(object):
                         break
                     else:
                         if handler.remote_address:
-                            logging.warn('timed out: %s:%d' %
-                                         handler.remote_address)
+                            logging.warning('timed out: %s:%d' % handler.remote_address)
                         else:
-                            logging.warn('timed out')
+                            logging.warning('timed out')
                         handler.destroy()
                         self._timeouts[pos] = None  # free memory
                         pos += 1
@@ -862,7 +861,7 @@ class TCPRelay(object):
                 if handler:
                     handler.handle_event(sock, event)
             else:
-                logging.warn('poll removed fd')
+                logging.warning('poll removed fd')
 
     def handle_periodic(self):
         if self._closed:
