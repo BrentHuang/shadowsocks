@@ -95,21 +95,20 @@ Apache License
 
 ## 源码编译安装
 
-`git clone https://ghproxy.com/git@github.com:BrentHuang/shadowsocks.git`
+`git clone https://github.com/BrentHuang/shadowsocks.git`
 
 注意：在 python 高版本上有报错，需要改源码，我已改好。
 
 ```bash
 python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install setuptools
-
 sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安装到 /usr/local/bin 目录下
 ```
 
-追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中有 sslocal 和 ssserver 可执行程序，更新也比较活跃。
+追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中也有 sslocal 和 ssserver 可执行程序，更新也比较活跃。
 
 ### 服务器配置、启停
 
-购买一台海外服务器：<https://www.digitalocean.com/>，<https://www.vultr.com/>
+购买一台海外服务器：<https://www.digitalocean.com/>，<https://www.vultr.com/>，<https://www.akamai.com/zh>
 
 服务器配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
 
@@ -121,9 +120,18 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
   "method": "aes-256-gcm"  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
 }
 
-启动服务器：sudo ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
+启动服务器：
 
-停止：sudo ssserver -d stop
+```bash
+sudo ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
+sudo ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本
+```
+
+停止：
+
+```bash
+sudo ssserver -d stop   # python 版
+```
 
 help 信息：ssserver -h
 
@@ -162,13 +170,13 @@ sudo vim /etc/privoxy/config
 
 #### GFWList2Privoxy 安装配置
 
-sudo pip3 install gfwlist2privoxy
+sudo pip3 install gfwlist2privoxy  # <https://pypi.org/project/gfwlist2privoxy/>
 
 获取在线 gfwlist 文件，并生成 actionfile 文件
 
 ```
 cd /tmp
-wget https://ghproxy.com/https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
+wget https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
 ```
