@@ -189,6 +189,8 @@ sudo cp gfwlist.action /etc/privoxy/
 
 sudo service privoxy restart
 
+如果某网址不能访问，可将其加到 /etc/privoxy/gfwlist.action 文件中，并重启 privoxy。
+
 #### 设置系统代理 Network Proxy
 
 将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
