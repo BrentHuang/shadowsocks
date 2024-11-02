@@ -110,8 +110,9 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
 
 购买一台海外服务器：<https://www.digitalocean.com/>，<https://www.vultr.com/>，<https://www.akamai.com/zh>
 
-服务器配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
+服务器配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，如下：
 
+```json
 {
   "server": "0.0.0.0",  # 你的服务器地址，默认为 0.0.0.0
   "server_port": 8388,  # 你的服务器端口，默认为 8338
@@ -119,6 +120,7 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
   "timeout": 300,  # 超时，默认为 300 秒
   "method": "aes-256-gcm"  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
 }
+```
 
 启动服务器：
 
@@ -131,6 +133,7 @@ sudo ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本
 
 ```bash
 sudo ssserver -d stop   # python 版
+# rust 版本没有停止命令
 ```
 
 help 信息：ssserver -h
@@ -139,8 +142,9 @@ help 信息：ssserver -h
 
 ### Linux 客户端配置、启停
 
-client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.json.example 文件，如下：
+client 配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，如下：
 
+```json
 {
   "server": "127.0.0.1",  # 改为你的服务器地址
   "server_port": 8388,    # 改为你的服务器端口
@@ -150,31 +154,34 @@ client 配置文件：/etc/shadowsocks/shadowsocks.json，配置参考 config.js
   "local_address": "127.0.0.1",  # 本地地址，一般不用变
   "local_port": 1080,  # 本地端口，一般不用变
 }
+```
 
-启动 client：sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start
+启动 client：`sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start`
 
-停止：sudo sslocal -d stop
+停止：`sudo sslocal -d stop`
 
-help 信息：sslocal -h
+help 信息：`sslocal -h`
 
-#### 安装 privoxy（<https://www.privoxy.org/>）
+#### 安装 privoxy
 
-sudo apt-get install -y privoxy
+`sudo apt-get install -y privoxy  # https://www.privoxy.org/`
 
 编辑配置文件
 
+```bash
 sudo cp /etc/privoxy/config /etc/privoxy/config.bak
 sudo vim /etc/privoxy/config
+```
 
 找到 listen-address 127.0.0.1:8118 行，取消注释
 
 #### GFWList2Privoxy 安装配置
 
-sudo pip3 install gfwlist2privoxy  # <https://pypi.org/project/gfwlist2privoxy/>
+`sudo pip3 install gfwlist2privoxy  # https://pypi.org/project/gfwlist2privoxy/`
 
 获取在线 gfwlist 文件，并生成 actionfile 文件
 
-```
+```bash
 cd /tmp
 wget https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
@@ -187,7 +194,7 @@ sudo cp gfwlist.action /etc/privoxy/
 
 #### 重启 privoxy
 
-sudo service privoxy restart
+`sudo service privoxy restart`
 
 如果某网址不能访问，可将其加到 /etc/privoxy/gfwlist.action 文件中，并重启 privoxy。
 
