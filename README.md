@@ -97,7 +97,7 @@ Apache License
 
 `git clone https://github.com/BrentHuang/shadowsocks.git`
 
-注意：在 python 高版本上有报错，需要改源码，我已改好。
+注意：在 python 高版本（3.12）上有报错，需要改源码，我已改好。
 
 ```bash
 python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install setuptools
@@ -110,7 +110,7 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
 
 购买一台海外服务器：<https://www.digitalocean.com/>，<https://www.vultr.com/>，<https://www.akamai.com/zh>
 
-服务器配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，如下：
+新建服务器配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，内容如下：
 
 ```json
 {
@@ -126,7 +126,7 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
 
 ```bash
 sudo ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
-sudo ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本
+sudo ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
 ```
 
 停止：
@@ -142,7 +142,7 @@ help 信息：ssserver -h
 
 ### Linux 客户端配置、启停
 
-client 配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，如下：
+新建 client 配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.example 文件，内容如下：
 
 ```json
 {
@@ -156,15 +156,27 @@ client 配置文件：/etc/shadowsocks/shadowsocks.json，参考 config.json.exa
 }
 ```
 
-启动 client：`sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start`
+启动 client：
 
-停止：`sudo sslocal -d stop`
+```bash
+sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
+sudo sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
+```
+
+停止：
+
+```bash
+sudo sslocal -d stop  # python 版本
+# rust 版本没有停止命令
+```
 
 help 信息：`sslocal -h`
 
 #### 安装 privoxy
 
-`sudo apt-get install -y privoxy  # https://www.privoxy.org/`
+privoxy: <https://www.privoxy.org/>
+
+`sudo apt-get install -y privoxy`
 
 编辑配置文件
 
@@ -177,9 +189,11 @@ sudo vim /etc/privoxy/config
 
 #### GFWList2Privoxy 安装配置
 
-`sudo pip3 install gfwlist2privoxy  # https://pypi.org/project/gfwlist2privoxy/`
+<https://pypi.org/project/gfwlist2privoxy/>
 
-获取在线 gfwlist 文件，并生成 actionfile 文件
+`sudo pip3 install gfwlist2privoxy`
+
+获取在线 gfwlist 文件，并生成 actionfile 文件：
 
 ```bash
 cd /tmp
@@ -200,6 +214,6 @@ sudo cp gfwlist.action /etc/privoxy/
 
 #### 设置系统代理 Network Proxy
 
-将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118
+将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118（上述 privoxy 的监听端口）
 
 浏览器代理设置为：使用系统代理 Use system proxy settings。
