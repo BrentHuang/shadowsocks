@@ -176,7 +176,7 @@ help 信息：`sslocal -h`
 
 privoxy: <https://www.privoxy.org/>
 
-`sudo apt-get install -y privoxy`
+`sudo apt install -y privoxy`
 
 编辑配置文件
 
