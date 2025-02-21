@@ -93,6 +93,87 @@ Apache License
 
 ###############################################################################
 
+1. Shadowsocks 的作用
+Shadowsocks 是一个基于 SOCKS5 协议的代理工具，主要用于加密和转发网络流量，帮助用户绕过网络封锁（如 GFW）。它的核心功能包括：
+
+- 加密传输：将用户的网络流量加密，防止被中间人监听或干扰。
+- 代理转发：将加密后的流量通过远程服务器转发，从而绕过网络封锁。
+- 高效性：Shadowsocks 设计轻量，适合低延迟和高吞吐量的场景。
+
+局限性：
+
+- Shadowsocks 本身只支持 SOCKS5 协议，无法直接处理 HTTP/HTTPS 流量。
+- 某些应用程序（如浏览器）可能不支持 SOCKS5 代理，需要额外的工具来适配。
+
+2. Privoxy 的作用
+Privoxy 是一个基于 HTTP/HTTPS 的代理工具，主要用于过滤和转发 HTTP 流量。它的核心功能包括：
+
+- HTTP 代理：将 HTTP/HTTPS 流量转发到指定的代理服务器（如 Shadowsocks）。
+- 流量过滤：支持广告拦截、隐私保护等功能。
+- 协议转换：将 HTTP 流量转换为 SOCKS5 协议，从而与 Shadowsocks 配合使用。
+
+局限性：
+
+- Privoxy 本身不支持加密，需要与其他工具（如 Shadowsocks）结合使用以实现安全传输。
+
+3. Shadowsocks 和 Privoxy 的配合方式
+Shadowsocks 和 Privoxy 的组合可以实现以下功能：
+
+协议适配：
+
+- Privoxy 作为 HTTP/HTTPS 代理，接收来自浏览器或其他应用程序的 HTTP 流量。
+- Privoxy 将这些流量转换为 SOCKS5 协议，并转发给 Shadowsocks 客户端。
+
+智能分流：
+
+- Privoxy 可以根据规则（如 GFWList）判断哪些流量需要通过 Shadowsocks 代理，哪些可以直接连接。
+- 只有被封锁的流量通过 Shadowsocks 转发，其他流量直接访问，从而提高效率。
+
+增强兼容性：
+
+- 某些应用程序（如浏览器）可能不支持 SOCKS5 代理，但支持 HTTP 代理。通过 Privoxy，这些应用程序可以间接使用 Shadowsocks。
+
+4. 具体工作流程
+以下是 Shadowsocks 和 Privoxy 组合使用的典型工作流程：
+
+用户发起请求：用户在浏览器或应用程序中配置 HTTP 代理，指向 Privoxy（例如 127.0.0.1:8118）。
+
+Privoxy 处理请求：Privoxy 接收到 HTTP 请求后，根据规则判断是否需要通过代理。如果需要代理，Privoxy 将请求转换为 SOCKS5 协议，并转发给 Shadowsocks 客户端（例如 127.0.0.1:1080）。
+
+Shadowsocks 加密并转发：Shadowsocks 客户端将流量加密，并通过远程 Shadowsocks 服务器转发。
+
+远程服务器解密流量并访问目标网站。
+
+返回响应：
+
+- 远程服务器将响应数据返回给 Shadowsocks 客户端。
+- Shadowsocks 客户端解密数据并返回给 Privoxy。
+- Privoxy 将响应数据返回给用户的浏览器或应用程序。
+
+5. 优势
+兼容性强：通过 Privoxy，支持 HTTP 代理的应用程序都可以间接使用 Shadowsocks。
+
+智能分流：只有被封锁的流量通过 Shadowsocks，其他流量直接连接，提高效率。
+
+隐私保护：Shadowsocks 提供加密，Privoxy 提供广告过滤和隐私保护，双重保障。
+
+6. 配置示例
+Shadowsocks 配置：
+
+启动 Shadowsocks 客户端，监听本地 SOCKS5 端口（如 127.0.0.1:1080）。
+
+Privoxy 配置：
+
+编辑 Privoxy 配置文件（如 /etc/privoxy/config），添加以下内容：
+
+forward-socks5 / 127.0.0.1:1080 .
+
+启动 Privoxy，监听本地 HTTP 端口（如 127.0.0.1:8118）。
+
+浏览器配置：
+
+在浏览器中设置 HTTP 代理为 127.0.0.1:8118。
+
 ## 源码编译安装
 
 `git clone https://github.com/BrentHuang/shadowsocks.git`
@@ -150,9 +231,9 @@ help 信息：ssserver -h
   "server_port": 8388,    # 改为你的服务器端口
   "password": "mypassword",  # 改为你的密码
   "timeout": 300,  # 超时，默认为 300 秒
-  "method": "aes-256-gcm"  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
+  "method": "aes-256-gcm",  # 加密方式，默认为 aes-256-cfb，推荐 aes-256-gcm
   "local_address": "127.0.0.1",  # 本地地址，一般不用变
-  "local_port": 1080,  # 本地端口，一般不用变
+  "local_port": 1080  # 本地端口，一般不用变
 }
 ```
 
@@ -181,17 +262,24 @@ privoxy: <https://www.privoxy.org/>
 编辑配置文件
 
 ```bash
-sudo cp /etc/privoxy/config /etc/privoxy/config.bak
+sudo cp /etc/privoxy/config /etc/privoxy/config-bak
 sudo vim /etc/privoxy/config
 ```
 
-找到 listen-address 127.0.0.1:8118 行，取消注释
+找到 listen-address 127.0.0.1:8118 行（有两行），取消注释。
 
 #### GFWList2Privoxy 安装配置
 
+GFWList2Privoxy 的主要作用是将 GFWList（Great Firewall List，即中国防火长城屏蔽的网站列表）转换为 Privoxy 的配置文件格式，从而帮助用户通过 Privoxy 实现网络流量的过滤和代理。
+
 <https://pypi.org/project/gfwlist2privoxy/>
 
-`sudo pip3 install gfwlist2privoxy`
+```bash
+sudo apt-get install python3-venv
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
+pip3 install gfwlist2privoxy
+```
 
 获取在线 gfwlist 文件，并生成 actionfile 文件：
 
@@ -217,3 +305,26 @@ sudo cp gfwlist.action /etc/privoxy/
 将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118（上述 privoxy 的监听端口）
 
 浏览器代理设置为：使用系统代理 Use system proxy settings。
+
+#### ssh 方式拉 github 代码
+
+在 Linux 系统上，通过以上设置后，在命令行通过 https 是可以拉取 github 代码的，但是不能通过 ssh 拉取代码，需要：
+
+1. 安装 netcat（`sudo apt-get install netcat-openbsd`）
+2. 在 ~/.ssh/config 文件中增加如下内容：
+
+```text
+Host github.com
+ProxyCommand nc -x 127.0.0.1:1080 %h %p
+```
+
+SSH 是 TCP 协议，可以直接使用 SOCKS5 代理（Shadowsocks 的 1080 端口）。
+
+SSH 不支持 HTTP 代理（Privoxy 的 8118 端口），因此不能直接使用 Privoxy，需要加上 `-X connect` 走 http 协议。
+
+nc 默认使用 socks5 协议，如果不通，就改用 http 协议：`-X connect`。`-X` 选项的说明如下：
+
+```text
+-X proxy_protocol
+    Use proxy_protocol when talking to the proxy server.  Supported protocols are 4 (SOCKS v.4), 5 (SOCKS v.5) and connect (HTTPS proxy).  If the protocol is not specified, SOCKS version 5 is used.
+```
