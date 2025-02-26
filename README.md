@@ -206,14 +206,14 @@ sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安�
 启动服务器：
 
 ```bash
-sudo ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
-sudo ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
+ssserver -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
+ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
 ```
 
 停止：
 
 ```bash
-sudo ssserver -d stop   # python 版
+ssserver -d stop   # python 版
 # rust 版本没有停止命令
 ```
 
@@ -240,14 +240,14 @@ help 信息：ssserver -h
 启动 client：
 
 ```bash
-sudo sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
-sudo sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
+sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
+sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
 ```
 
 停止：
 
 ```bash
-sudo sslocal -d stop  # python 版本
+sslocal -d stop  # python 版本
 # rust 版本没有停止命令
 ```
 
