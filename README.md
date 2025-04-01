@@ -89,7 +89,7 @@ python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install se
 sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安装到 /usr/local/bin 目录下
 ```
 
-追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中也有 sslocal 和 ssserver 可执行程序，更新也比较活跃。
+追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中也有 sslocal 和 ssserver 可执行程序，更新也比较活跃。将可执行程序拷贝到 /usr/local/bin/ 目录下。
 
 ## 服务器配置、启停
 
@@ -118,7 +118,7 @@ ssserver -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-f
 
 ```bash
 ssserver -d stop   # python 版
-# rust 版本没有停止命令
+killall -15 ssserver  # rust 版本没有停止命令
 ```
 
 help 信息：ssserver -h
@@ -152,8 +152,10 @@ sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-fi
 
 ```bash
 sslocal -d stop  # python 版本
-# rust 版本没有停止命令
+killall -15 sslocal  # rust 版本没有停止命令
 ```
+
+可以通过 cinnamon-menu-editor（命令行启动）添加系统菜单。
 
 help 信息：`sslocal -h`
 
@@ -170,7 +172,7 @@ sudo cp /etc/privoxy/config /etc/privoxy/config-bak
 sudo vim /etc/privoxy/config
 ```
 
-找到 listen-address 127.0.0.1:8118 行（有两行），取消注释。
+找到 listen-address 127.0.0.1:8118 行（有两行），确认取消掉注释。
 
 ### GFWList2Privoxy 安装配置
 
@@ -180,15 +182,16 @@ GFWList2Privoxy 的主要作用是将 GFWList（Great Firewall List，即中国�
 
 ```bash
 sudo apt-get install python3-venv
-python3 -m venv ~/.venv
-source ~/.venv/bin/activate
+cd ~/Downloads/shadowsocks
+python3 -m venv .venv
+source .venv/bin/activate
 pip3 install gfwlist2privoxy
 ```
 
 获取在线 gfwlist 文件，并生成 actionfile 文件：
 
 ```bash
-cd /tmp
+cd ~/Downloads/shadowsocks
 wget https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt
 gfwlist2privoxy -i gfwlist.txt -f gfwlist.action -p 127.0.0.1:1080 -t socks5
 sudo cp gfwlist.action /etc/privoxy/
@@ -206,7 +209,7 @@ sudo cp gfwlist.action /etc/privoxy/
 
 ### 设置系统代理 Network Proxy
 
-将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118（上述 privoxy 的监听端口）
+将系统代理设置为手动 Manual，http 代理和 https 代理 ip 均为 127.0.0.1，port 均为 8118（上述 privoxy 的监听端口），socks 代理 ip 为 127.0.0.1，port 为 1080
 
 浏览器代理设置为：使用系统代理 Use system proxy settings。
 
