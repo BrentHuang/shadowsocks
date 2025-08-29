@@ -72,7 +72,7 @@
     Shadowsocks 配置：启动 Shadowsocks 客户端，监听本地 SOCKS5 端口（如 127.0.0.1:1080）。
 
     Privoxy 配置：编辑 Privoxy 配置文件（如 /etc/privoxy/config），添加以下内容：
-forward-socks5 / 127.0.0.1:1080 .
+forward-socks5t / 127.0.0.1:1080 .
 
     启动 Privoxy，监听本地 HTTP 端口（如 127.0.0.1:8118）。
 
@@ -89,7 +89,7 @@ python3 setup.py build  # 依赖 setuptools，安装：python3 -m pip install se
 sudo python3 setup.py install  # sslocal 和 ssserver 可执行程序会被安装到 /usr/local/bin 目录下
 ```
 
-追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中也有 sslocal 和 ssserver 可执行程序，更新也比较活跃。将可执行程序拷贝到 /usr/local/bin/ 目录下。
+追求性能的话可以使用 rust 版本：<https://github.com/shadowsocks/shadowsocks-rust>，其中也有 sslocal 和 ssserver 可执行程序，更新也比较活跃。
 
 ## 服务器配置、启停
 
@@ -145,7 +145,7 @@ help 信息：ssserver -h
 
 ```bash
 sslocal -c /etc/shadowsocks/shadowsocks.json --log-file=/var/log/shadowsocks.log -d start  # python 版本
-sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项
+sslocal -c /etc/shadowsocks/shadowsocks.json -d  # rust 版本，没有 --log-file 选项，-d 表示 deamon 进程
 ```
 
 停止：
@@ -174,6 +174,8 @@ sudo vim /etc/privoxy/config
 
 找到 listen-address 127.0.0.1:8118 行（有两行），确认取消掉注释。
 
+添加转发规则，将所有流量转发到 sslocal 开启的SOCKS5端口（默认1080）：`forward-socks5t / 127.0.0.1:1080 .`
+
 ### GFWList2Privoxy 安装配置
 
 GFWList2Privoxy 的主要作用是将 GFWList（Great Firewall List，即中国防火长城屏蔽的网站列表）转换为 Privoxy 的配置文件格式，从而帮助用户通过 Privoxy 实现网络流量的过滤和代理。
@@ -181,7 +183,7 @@ GFWList2Privoxy 的主要作用是将 GFWList（Great Firewall List，即中国�
 <https://pypi.org/project/gfwlist2privoxy/>
 
 ```bash
-sudo apt-get install python3-venv
+# sudo apt-get install python3-venv
 cd ~/Downloads/shadowsocks
 python3 -m venv .venv
 source .venv/bin/activate
@@ -199,7 +201,7 @@ sudo cp gfwlist.action /etc/privoxy/
 
 在 /etc/privoxy/gfwlist.action 文件中添加需要通过 proxy 访问的域名（常用的已经在里面了，不需要改）,
 
-在 /etc/privoxy/config 文件中加上：actionsfile gfwlist.action。
+在 /etc/privoxy/config 文件中加上：actionsfile gfwlist.action
 
 ### 重启 privoxy
 
@@ -215,21 +217,28 @@ sudo cp gfwlist.action /etc/privoxy/
 
 ### ssh 方式拉 github 代码
 
-在 Linux 系统上，通过以上设置后，在命令行通过 https 是可以拉取 github 代码的，但是不能通过 ssh 拉取代码，需要：
+在 Linux 系统上，通过以上设置后，在命令行通过 https 是可以拉取 github 代码的，但是不能通过 ssh 拉取代码，需要为 ssh 的 22 端口配置代理：
 
 1. 安装 netcat（`sudo apt-get install netcat-openbsd`）
 2. 在 ~/.ssh/config 文件中增加如下内容：
 
     ```text
-    Host github.com
-    ProxyCommand nc -x 127.0.0.1:1080 %h %p
+Host github.com
+    User git
+    Hostname github.com
+    Port 22
+    ProxyCommand nc -x 127.0.0.1:1080 %h %p  # socks5
+    # ProxyCommand nc -X connect -x 127.0.0.1:8118 %h %p  # https
     ```
 
-说明：SSH 是 TCP 协议，可以直接使用 SOCKS5 代理（Shadowsocks 的 1080 端口）。nc 默认也使用 socks5 协议，如果不通，就改用 http 协议：`-X connect`。`-X` 选项的说明如下：
+说明：
+- SSH 是 TCP 协议，可以直接使用 SOCKS5 代理（Shadowsocks 的 1080 端口），nc 默认也使用 socks5 协议。
+- SSH 不支持 HTTP 代理（Privoxy 的 8118 端口），因此不能直接使用 Privoxy，需要加上 `-X connect` 才能走 http 协议。
+
+`-X` 选项的说明如下：
 
 ```text
 -X proxy_protocol
     Use proxy_protocol when talking to the proxy server.  Supported protocols are 4 (SOCKS v.4), 5 (SOCKS v.5) and connect (HTTPS proxy).  If the protocol is not specified, SOCKS version 5 is used.
 ```
 
-SSH 不支持 HTTP 代理（Privoxy 的 8118 端口），因此不能直接使用 Privoxy，需要加上 `-X connect` 才能走 http 协议。
