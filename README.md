@@ -174,7 +174,7 @@ sudo vim /etc/privoxy/config
 
 找到 listen-address 127.0.0.1:8118 行（有两行），确认取消掉注释。
 
-添加转发规则，将所有流量转发到 sslocal 开启的SOCKS5端口（默认1080）：`forward-socks5t / 127.0.0.1:1080 .`
+添加转发规则，将所有流量转发到 sslocal 开启的 SOCKS5 端口（默认 1080）：`forward-socks5t / 127.0.0.1:1080 .`。forward-socks5t 中的 t 代表转发 DNS 查询通过 SOCKS5，这对于避免 DNS 泄漏很重要。
 
 ### GFWList2Privoxy 安装配置
 
@@ -223,17 +223,18 @@ sudo cp gfwlist.action /etc/privoxy/
 2. 在 ~/.ssh/config 文件中增加如下内容：
 
     ```text
-Host github.com
-    User git
-    Hostname github.com
-    Port 22
-    ProxyCommand nc -x 127.0.0.1:1080 %h %p  # socks5
-    # ProxyCommand nc -X connect -x 127.0.0.1:8118 %h %p  # https
+    Host github.com
+        User git
+        Hostname github.com
+        Port 22
+        ProxyCommand nc -x 127.0.0.1:1080 %h %p  # socks5
+        # ProxyCommand nc -X connect -x 127.0.0.1:8118 %h %p  # https
     ```
 
 说明：
-- SSH 是 TCP 协议，可以直接使用 SOCKS5 代理（Shadowsocks 的 1080 端口），nc 默认也使用 socks5 协议。
-- SSH 不支持 HTTP 代理（Privoxy 的 8118 端口），因此不能直接使用 Privoxy，需要加上 `-X connect` 才能走 http 协议。
+
+- SSH 是 TCP 协议，可以直接使用 SOCKS5 代理（Shadowsocks 的 1080 端口），nc 默认也使用 SOCKS5 协议。
+- SSH 不支持 HTTP 代理（Privoxy 的 8118 端口），因此不能直接使用 Privoxy，需要加上 `-X connect` 才能走 HTTP 协议。
 
 `-X` 选项的说明如下：
 
@@ -241,4 +242,3 @@ Host github.com
 -X proxy_protocol
     Use proxy_protocol when talking to the proxy server.  Supported protocols are 4 (SOCKS v.4), 5 (SOCKS v.5) and connect (HTTPS proxy).  If the protocol is not specified, SOCKS version 5 is used.
 ```
-
