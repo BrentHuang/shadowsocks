@@ -174,7 +174,9 @@ sudo vim /etc/privoxy/config
 
 找到 listen-address 127.0.0.1:8118 行（有两行），确认取消掉注释。
 
-添加转发规则，将所有流量转发到 sslocal 开启的 SOCKS5 端口（默认 1080）：`forward-socks5t / 127.0.0.1:1080 .`。forward-socks5t 中的 t 代表转发 DNS 查询通过 SOCKS5，这对于避免 DNS 泄漏很重要。
+添加转发规则，将所有流量转发到 sslocal 开启的 SOCKS5 端口（默认 1080）：`forward-socks5t / 127.0.0.1:1080 .`
+
+forward-socks5t 中的 t 代表转发 DNS 查询通过 SOCKS5，这对于避免 DNS 泄漏很重要。
 
 ### GFWList2Privoxy 安装配置
 
